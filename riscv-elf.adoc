@@ -762,7 +762,7 @@ The first entry in the PLT occupies two 16 byte entries for the default PLT styl
 [,asm]
 ----
 1:  auipc  t2, %pcrel_hi(.got.plt)
-    sub    t1, t1, t3               # shifted .got.plt offset + hdr size + 12 
+    sub    t1, t1, t3               # shifted .got.plt offset + hdr size + 12
     l[w|d] t3, %pcrel_lo(1b)(t2)    # _dl_runtime_resolve
     addi   t1, t1, -(hdr size + 12) # shifted .got.plt offset
     addi   t0, t2, %pcrel_lo(1b)    # &.got.plt
@@ -771,7 +771,7 @@ The first entry in the PLT occupies two 16 byte entries for the default PLT styl
     jr     t3
 ----
 
-And occupies two 16 byte entries for the unlabeled landing pad PLT style:
+And occupies two 16 byte entries for the landing pad PLT style:
 
 [,asm]
 ----
@@ -1525,7 +1525,7 @@ Description:: Additional information about the program property type.
 each bit indicating a feature that the object file is compatible with. The
 linker should perform a bitwise AND operation when merging different objects.
 
-The value of `GNU_PROPERTY_RISCV_FEATURE_1_AND` is defined in <<rv-prog-prop-type>>.
+The `pr_type` value of `GNU_PROPERTY_RISCV_FEATURE_1_AND` is `0xc0000000`.
 
 [%autowidth]
 |===
@@ -1538,7 +1538,7 @@ The value of `GNU_PROPERTY_RISCV_FEATURE_1_AND` is defined in <<rv-prog-prop-typ
 executable sections are built to be compatible with the landing pad mechanism
 provided by the Zicfilp extension in the unlabeled scheme: Executables and
 shared libraries with this bit set are required to generate PLTs in the
-unlabeled landing pad PLT style, and all of the labels of lpad instructions are
+landing pad PLT style, and all of the labels of lpad instructions are
 set to 0, i.e. unlabeled.
 See <<Tool Requirements for Generating Landing Pad Instruction>> for more details.
 
@@ -1561,8 +1561,7 @@ instruction with a compatible label value. Indirect branches may originate from:
 
 * Static linkers when generating PLT entries.
 
-* Other executables and shared libraries via calls through PLT entries or
-  function pointers.
+* Other executables and shared libraries via calls through function pointers.
 
 It is desirable to minimize the number of landing pad instructions to limit the
 number of indirect branch destinations within the program. The following tool
